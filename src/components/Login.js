@@ -40,11 +40,10 @@ const Login = () => {
         }).then(() => {
           const {uid, email, displayName,photoURL} = auth.currentUser;
           dispatch(addUser({uid, email, displayName, photoURL}))
-          navigate("/browse")
         }).catch((error) => {
           console.log("error is ", error)
         });
-        //on authStateChanged will be called from body componet, there we are dispatching the action
+        //on authStateChanged will be called from Header componet, there we are dispatching the action
         
       })
       .catch((error) => {
@@ -57,8 +56,7 @@ const Login = () => {
       signInWithEmailAndPassword(auth, email.current.value, password.current.value)
       .then((userCredential) => {
         const user = userCredential.user;
-        //on authStateChanged will be called from body componet, there we are dispatching the action
-        navigate("/browse")
+        //on authStateChanged will be called from Header componet, there we are dispatching the action
       })
       .catch((error) => {
         const errorCode = error.code;
