@@ -1,8 +1,16 @@
 import React, { useState, useRef } from 'react'
 import Header from './Header'
 import { checkValidData } from '../utils/validate'
+import { updateProfile, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from '../utils/firebase';
+import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { addUser } from '../utils/userSlice';
+
 
 const Login = () => {
+  const navigate = useNavigate()
+  const dispatch = useDispatch()
   const [isSignInForm , setIsSignInForm ] = useState(true)
   const [errorMsg, setErrorMsg] = useState(null)
   const email = useRef()
@@ -15,10 +23,51 @@ const Login = () => {
   const btnText = isSignInForm ? "Sign in": "Sign Up"
 
   const handleCta = () => {
+    
     const msg = checkValidData(email.current.value,password.current.value, !isSignInForm, isSignInForm ? "" : fullName.current.value)
     setErrorMsg(msg)
 
+    if(msg)  return;
     
+    if(!isSignInForm){  //sign up logic
+      createUserWithEmailAndPassword(auth, email.current.value, password.current.value)
+      .then((userCredential) => {
+        // Signed in 
+        const user = userCredential.user;
+        updateProfile(user, {
+          displayName: fullName.current.value,
+          photoURL: "https://scontent.fmaa11-1.fna.fbcdn.net/v/t39.30808-6/363371400_1658949361286369_3285400467360636141_n.jpg?_nc_cat=110&ccb=1-7&_nc_sid=a2f6c7&_nc_ohc=Ea0Wr5DlvVEAX8hjOFH&_nc_ht=scontent.fmaa11-1.fna&oh=00_AfARWY2GG8gzIzYviMpcG5Amc3-NTWiBcxmzRfm2PbVO_w&oe=6500F68B"
+        }).then(() => {
+          const {uid, email, displayName,photoURL} = auth.currentUser;
+          dispatch(addUser({uid, email, displayName, photoURL}))
+          navigate("/browse")
+        }).catch((error) => {
+          console.log("error is ", error)
+        });
+        //on authStateChanged will be called from body componet, there we are dispatching the action
+        
+      })
+      .catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        setErrorMsg(errorCode+errorMessage)
+      });
+
+    }else{  //sign in logic
+      signInWithEmailAndPassword(auth, email.current.value, password.current.value)
+      .then((userCredential) => {
+        const user = userCredential.user;
+        //on authStateChanged will be called from body componet, there we are dispatching the action
+        navigate("/browse")
+      })
+      .catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        setErrorMsg(errorCode + errorMessage)
+      });
+    }
+
+     
   }
   return (
     <div>
