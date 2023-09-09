@@ -6,6 +6,7 @@ import { auth } from '../utils/firebase';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { addUser } from '../utils/userSlice';
+import { BACKGROUND_URL, USER_AVATAR } from '../utils/constants';
 
 
 const Login = () => {
@@ -36,7 +37,7 @@ const Login = () => {
         const user = userCredential.user;
         updateProfile(user, {
           displayName: fullName.current.value,
-          photoURL: "https://scontent.fmaa11-1.fna.fbcdn.net/v/t39.30808-6/363371400_1658949361286369_3285400467360636141_n.jpg?_nc_cat=110&ccb=1-7&_nc_sid=a2f6c7&_nc_ohc=Ea0Wr5DlvVEAX8hjOFH&_nc_ht=scontent.fmaa11-1.fna&oh=00_AfARWY2GG8gzIzYviMpcG5Amc3-NTWiBcxmzRfm2PbVO_w&oe=6500F68B"
+          photoURL: USER_AVATAR
         }).then(() => {
           const {uid, email, displayName,photoURL} = auth.currentUser;
           dispatch(addUser({uid, email, displayName, photoURL}))
@@ -71,7 +72,7 @@ const Login = () => {
     <div>
         <Header />
         <div className='absolute'>
-            <img src="https://assets.nflxext.com/ffe/siteui/vlv3/42df4e1f-bef6-499e-87ff-c990584de314/5e7c383c-1f88-4983-b4da-06e14c0984ba/IN-en-20230904-popsignuptwoweeks-perspective_alpha_website_large.jpg" alt="bg-img" />
+            <img src={BACKGROUND_URL} alt="bg-img" />
         </div>
         <form onSubmit={e => e.preventDefault()} className='absolute p-12 text-white bg-black w-3/12 my-36 mx-auto right-0 left-0 bg-opacity-80'>
           <h1 className='font-bold text-3xl py-4'>{btnText}</h1>
