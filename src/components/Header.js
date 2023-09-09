@@ -11,7 +11,6 @@ const Header = () => {
   const navigate = useNavigate()
   const dispatch = useDispatch()
   const user = useSelector(state => state.user)
-  console.log("header is rendered")
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
         if (user) {
