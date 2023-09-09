@@ -10,8 +10,9 @@ const Header = () => {
   const navigate = useNavigate()
   const dispatch = useDispatch()
   const user = useSelector(state => state.user)
+  console.log("header is rendered")
   useEffect(() => {
-    onAuthStateChanged(auth, (user) => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
         if (user) {
             const {uid, email, displayName,photoURL} = user;
             dispatch(addUser({uid, email, displayName, photoURL}))
@@ -21,6 +22,10 @@ const Header = () => {
             navigate("/")
         }
       });
+
+    return () => {
+      unsubscribe()
+    }
 },[])
   const signOutCta = () => {
     signOut(auth).then(() => {}).catch((error) => {
